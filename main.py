@@ -68,7 +68,7 @@ def check_collision(x1, y1, w1, h1, x2, y2, w2, h2):
 music_played2 = False 
 def game_over():
     global music_played2
-    score = font.render("Game Over lol", True, (255,255,34))
+    score = font.render("Game Over!", True, (255,255,34))
     screen.blit(score, (300, 300))
     if music_played2 == False:
         mixer.Sound("./audio/gameover.wav").play()
@@ -95,7 +95,10 @@ while runnning:
     screen.fill((50,149,255))
     if playing == False:
         playing = True 
-        mixer.Sound("./audio/ambi.wav").play()
+        bgm = mixer.Sound("./audio/ambi.wav")
+        channel = bgm.play()
+        channel.set_volume(0.1)
+        
 
     for event in pygame.event.get() :
         if event.type == pygame.QUIT:
@@ -128,6 +131,8 @@ while runnning:
             playerX = 0
         elif playerX >=800 - 64:
             playerX = 800 - 64
+
+        # SCORES
         if score_value < 0:
             game_over()
             if music_played == False:
@@ -137,7 +142,7 @@ while runnning:
         if score_value >= 5:
             level50()
             if music_played == False:
-                mixer.Sound("./audio/gameover.wav").play()
+                mixer.Sound("./audio/level50_pass.wav").play()
                 music_played = True
             num_of_enemies = 0
 
