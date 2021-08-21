@@ -65,9 +65,15 @@ def check_collision(x1, y1, w1, h1, x2, y2, w2, h2):
         return False
     else:
         return True
+music_played2 = False 
 def game_over():
+    global music_played2
     score = font.render("Game Over lol", True, (255,255,34))
     screen.blit(score, (300, 300))
+    if music_played2 == False:
+        mixer.Sound("./audio/gameover.wav").play()
+        music_played2 = True
+        num_of_enemies = 0
 playing = False
 def intro_game():
     global playing
@@ -78,6 +84,9 @@ def intro_game():
     screen.blit(intro_text, (200, 100))
     screen.blit(intro_text2, (200, 200))
 
+def level50():
+    score = font.render("Great Job You completed level 50!", True, (175,25,34))
+    screen.blit(score, (300, 300))
 
 music_played = False
 runnning = True
@@ -121,6 +130,12 @@ while runnning:
             playerX = 800 - 64
         if score_value < 0:
             game_over()
+            if music_played == False:
+                mixer.Sound("./audio/gameover.wav").play()
+                music_played = True
+            num_of_enemies = 0
+        if score_value >= 5:
+            level50()
             if music_played == False:
                 mixer.Sound("./audio/gameover.wav").play()
                 music_played = True
