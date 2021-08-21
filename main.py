@@ -23,8 +23,8 @@ enemyX = []
 enemyY = []
 enemyX_change = []
 enemyY_change = []
-
-num_of_enemies = 6
+enmy_list = range(8,13)
+num_of_enemies = random.choice(enmy_list)
 
 for i in range(num_of_enemies):
     enemyImg.append( pygame.image.load("typescript.png") )
@@ -84,21 +84,32 @@ def intro_game():
     screen.blit(intro_text, (200, 100))
     screen.blit(intro_text2, (200, 200))
 
-def level50():
-    score = font.render("Great Job You completed level 50!", True, (175,25,34))
-    screen.blit(score, (300, 300))
+def level5():
+    text1 = font.render("Great Job, You've completed level 5 !", True, (175,25,34))
+    text2 = font.render("Press C on your keyboard to continue...", True, (175,25,34))
+    screen.blit(text1, (130, 300))
+    screen.blit(text2, (130, 400))
 
 music_played = False
 runnning = True
 intro = True
+close_to_effect_player = False
+
+# Levels
+level5 = False
+level10 = False
+level15 = False
+level25 = False
+level50 = False
+level100 = False
+
 while runnning:
     screen.fill((50,149,255))
     if playing == False:
-        playing = True 
+        playing = True
         bgm = mixer.Sound("./audio/ambi.wav")
         channel = bgm.play()
         channel.set_volume(0.1)
-        
 
     for event in pygame.event.get() :
         if event.type == pygame.QUIT:
@@ -109,6 +120,9 @@ while runnning:
                     intro = False
                     print("Game is Started...")
                     print("press Y on your keyboard to play game...")
+            if event.key == pygame.K_c:
+                if level5 == False:
+                    level5 = True
             if event.key == pygame.K_LEFT:
                 playerX_change = -1
             if event.key == pygame.K_RIGHT:
@@ -122,11 +136,10 @@ while runnning:
                     bulletX = playerX
                     bulletY = playerY
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_y:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_y or event.key == pygame.K_c:
                 playerX_change = 0 
     if intro == False:
         playerX += playerX_change  
-
         if playerX <=0:
             playerX = 0
         elif playerX >=800 - 64:
@@ -134,17 +147,17 @@ while runnning:
 
         # SCORES
         if score_value < 0:
-            game_over()
+            game_over() 
             if music_played == False:
                 mixer.Sound("./audio/gameover.wav").play()
                 music_played = True
             num_of_enemies = 0
         if score_value >= 5:
-            level50()
+            if level5 == True:
+                level5()
             if music_played == False:
                 mixer.Sound("./audio/level50_pass.wav").play()
                 music_played = True
-            num_of_enemies = 0
 
             
         for i in range(num_of_enemies):
@@ -169,11 +182,14 @@ while runnning:
             enemyY[i] += enemyY_change[i]
             enemyX[i] += enemyX_change[i]
             if check_collision(playerX, playerY, 64, 64, enemyX[i], enemyY[i], 64, 64):
-                game_over()
-                if music_played == False:
-                    mixer.Sound("./audio/gameover.wav").play()
-                    music_played = True
-                break
+                if close_to_effect_player == False:
+                    effect_closeTo = mixer.Sound("./audio/close_to_player.wav")
+                    channel2 = effect_closeTo.play()
+                    channel2.set_volume(0.1)
+                    score_value -= 1
+                    close_to_effect_player = True
+
+                    
             elif check_collision(bulletX, bulletY, 64, 64, enemyX[i], enemyY[i], 64, 64):
                 bulletY = 0
                 bulletX = 0
